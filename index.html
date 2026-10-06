@@ -1,1 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>Daily Fitness - Monthly Registration</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f3f4f6;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.container {
+    width: 100%;
+    max-width: 450px;
+    background: white;
+    border-radius: 18px;
+    padding: 30px 25px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.10);
+}
+
+.logo {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.logo h1 {
+    margin: 0;
+    font-size: 30px;
+    font-weight: 800;
+    color: #111827;
+}
+
+.logo p {
+    margin-top: 6px;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.title {
+    text-align: center;
+    font-size: 22px;
+    font-weight: 700;
+    margin: 25px 0 20px;
+    color: #111827;
+}
+
+label {
+    display: block;
+    margin-bottom: 7px;
+    font-weight: 600;
+    color: #374151;
+    font-size: 14px;
+}
+
+input {
+    width: 100%;
+    padding: 14px;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    font-size: 16px;
+    margin-bottom: 18px;
+    outline: none;
+}
+
+input:focus {
+    border-color: #111827;
+    box-shadow: 0 0 0 2px rgba(17,24,39,0.08);
+}
+
+button {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 10px;
+    background: #111827;
+    color: white;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #000000;
+}
+
+.note {
+    text-align: center;
+    font-size: 12px;
+    color: #6b7280;
+    margin-top: 15px;
+    line-height: 1.5;
+}
+
+.success {
+    display: none;
+    text-align: center;
+    padding: 20px 10px;
+}
+
+.success-icon {
+    font-size: 50px;
+    margin-bottom: 10px;
+}
+
+.success h2 {
+    margin: 5px 0 10px;
+    color: #111827;
+}
+
+.success p {
+    color: #6b7280;
+    line-height: 1.5;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div id="registrationForm">
+
+        <div class="logo">
+            <h1>DAILY FITNESS</h1>
+            <p>Monthly Membership Registration</p>
+        </div>
+
+        <div class="title">
+            Register Now
+        </div>
+
+        <form id="form">
+
+            <label for="fullName">Full Name</label>
+            <input
+                type="text"
+                id="fullName"
+                placeholder="Enter your full name"
+                required
+            >
+
+            <label for="contact">Contact Number</label>
+            <input
+                type="tel"
+                id="contact"
+                placeholder="Enter your contact number"
+                required
+            >
+
+            <label for="startDate">Preferred Start Date</label>
+            <input
+                type="date"
+                id="startDate"
+                required
+            >
+
+            <button type="submit">
+                Submit Registration
+            </button>
+
+        </form>
+
+        <div class="note">
+            Your registration will be reviewed by Daily Fitness staff.
+        </div>
+
+    </div>
+
+    <div class="success" id="successMessage">
+
+        <div class="success-icon">✅</div>
+
+        <h2>Registration Submitted!</h2>
+
+        <p>
+            Thank you for registering with Daily Fitness.
+            <br><br>
+            Please wait for the staff to confirm your membership.
+        </p>
+
+    </div>
+
+</div>
+
+<script>
+
+document.getElementById("form").addEventListener("submit", function(event) {
+
+    event.preventDefault();
+
+    const fullName = document.getElementById("fullName").value.trim();
+    const contact = document.getElementById("contact").value.trim();
+    const startDate = document.getElementById("startDate").value;
+
+    if (!fullName || !contact || !startDate) {
+        alert("Please complete all fields.");
+        return;
+    }
+
+    let registrations = JSON.parse(
+        localStorage.getItem("dailyFitnessRegistrationRequests") || "[]"
+    );
+
+    const duplicate = registrations.some(item =>
+        item.fullName &&
+        item.contact &&
+        item.fullName.toLowerCase() === fullName.toLowerCase() &&
+        item.contact === contact &&
+        item.status === "Pending"
+    );
+
+    if (duplicate) {
+        alert("You already have a pending registration.");
+        return;
+    }
+
+    const registration = {
+        id: Date.now(),
+        fullName: fullName,
+        contact: contact,
+        startDate: startDate,
+        status: "Pending",
+        submittedAt: new Date().toISOString()
+    };
+
+    registrations.push(registration);
+
+    localStorage.setItem(
+        "dailyFitnessRegistrationRequests",
+        JSON.stringify(registrations)
+    );
+
+    document.getElementById("registrationForm").style.display = "none";
+    document.getElementById("successMessage").style.display = "block";
+
+});
+
+</script>
+
+</body>
+</html>

@@ -4,270 +4,96 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Daily Fitness - Login</title>
+<title>Daily Fitness Login Test</title>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 
 <style>
-
-*{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
-}
-
 body{
-    font-family:Arial,Helvetica,sans-serif;
+    margin:0;
     min-height:100vh;
     background:#050505;
-    color:#fff;
-
+    color:white;
+    font-family:Arial,sans-serif;
     display:flex;
     align-items:center;
     justify-content:center;
-
-    padding:20px;
 }
 
-.login-box{
-    width:100%;
-    max-width:430px;
-
-    background:#101010;
-
-    border:1px solid #252525;
-
+.box{
+    width:400px;
+    max-width:90%;
+    background:#111;
+    border:1px solid #333;
     border-radius:20px;
-
-    padding:40px 32px;
-
-    box-shadow:
-        0 0 40px rgba(255,204,0,.08);
-}
-
-.logo{
+    padding:40px;
     text-align:center;
-    margin-bottom:30px;
 }
 
-.logo h1{
-    font-size:34px;
-    font-weight:900;
-    letter-spacing:2px;
-
+h1{
     color:#ffd000;
+    font-size:34px;
 }
 
-.logo p{
-    margin-top:6px;
-
-    font-size:12px;
-    letter-spacing:4px;
-
-    color:#aaa;
-}
-
-.title{
-    text-align:center;
-
-    font-size:22px;
-    font-weight:800;
-
-    margin-bottom:8px;
-}
-
-.subtitle{
-    text-align:center;
-
-    color:#888;
-
-    font-size:14px;
-
-    margin-bottom:28px;
-}
-
-.google-btn{
-
+button{
     width:100%;
-
-    border:none;
-
+    padding:18px;
+    margin-top:25px;
+    border:0;
+    border-radius:12px;
     background:#ffd000;
     color:#000;
-
-    padding:15px;
-
-    border-radius:12px;
-
-    font-size:15px;
-    font-weight:800;
-
-    cursor:pointer;
-
-    transition:.2s;
-}
-
-.google-btn:hover{
-    background:#ffe45c;
-    transform:translateY(-1px);
-}
-
-.google-btn:disabled{
-    opacity:.6;
-    cursor:not-allowed;
-}
-
-.message{
-    margin-top:20px;
-
-    padding:12px;
-
-    border-radius:10px;
-
-    font-size:13px;
-
-    text-align:center;
-
-    display:none;
-}
-
-.message.error{
-    display:block;
-
-    background:#351010;
-
-    border:1px solid #7b2929;
-
-    color:#ff8585;
-}
-
-.message.success{
-    display:block;
-
-    background:#103515;
-
-    border:1px solid #2c7a35;
-
-    color:#7dff8a;
-}
-
-.user-box{
-    display:none;
-
-    margin-top:25px;
-
-    padding:15px;
-
-    background:#181818;
-
-    border-radius:12px;
-
-    border:1px solid #292929;
-}
-
-.user-email{
-    color:#ffd000;
-
+    font-size:17px;
     font-weight:bold;
-
-    word-break:break-all;
-}
-
-.user-role{
-    margin-top:6px;
-
-    color:#aaa;
-
-    font-size:13px;
-}
-
-.uid{
-    margin-top:10px;
-
-    font-size:10px;
-
-    color:#666;
-
-    word-break:break-all;
-}
-
-.logout-btn{
-
-    width:100%;
-
-    margin-top:15px;
-
-    padding:12px;
-
-    border-radius:10px;
-
-    border:1px solid #333;
-
-    background:#181818;
-
-    color:#fff;
-
     cursor:pointer;
 }
 
-.logout-btn:hover{
+#status{
+    margin-top:20px;
+    padding:15px;
+    border-radius:10px;
     background:#222;
+    color:#aaa;
+    min-height:20px;
 }
 
+.success{
+    color:#70ff70 !important;
+}
+
+.error{
+    color:#ff7070 !important;
+}
 </style>
 </head>
 
 <body>
 
-<div class="login-box">
+<div class="box">
 
-    <div class="logo">
-        <h1>DAILY FITNESS</h1>
-        <p>STRONGER EVERY DAY</p>
-    </div>
+    <h1>DAILY FITNESS</h1>
 
-    <div class="title">
-        Staff Portal
-    </div>
+    <p>GOOGLE LOGIN TEST</p>
 
-    <div class="subtitle">
-        Sign in using your authorized Google account
-    </div>
-
-    <button id="googleBtn" class="google-btn">
+    <button id="googleBtn">
         🔐 SIGN IN WITH GOOGLE
     </button>
 
-    <div id="message" class="message"></div>
-
-    <div id="userBox" class="user-box">
-
-        <div>
-            Signed in as:
-        </div>
-
-        <div id="userEmail" class="user-email"></div>
-
-        <div id="userRole" class="user-role"></div>
-
-        <div id="userUid" class="uid"></div>
-
-        <button id="logoutBtn" class="logout-btn">
-            LOG OUT
-        </button>
-
+    <div id="status">
+        Ready...
     </div>
 
 </div>
 
-
 <script>
 
-/* =====================================================
+console.log("STEP 1: JavaScript loaded");
+
+
+/* ================================
    FIREBASE CONFIG
-===================================================== */
+================================ */
 
 const firebaseConfig = {
 
@@ -289,86 +115,85 @@ const firebaseConfig = {
         "27440670515",
 
     appId:
-        "1:27440670515:web:7292f1ee2573a25fc18046",
-
-    measurementId:
-        "G-SBQXSXIDML1"
+        "1:27440670515:web:7292f1ee2573a25fc18046"
 };
 
 
-/* =====================================================
+console.log("STEP 2: Firebase config loaded");
+
+
+/* ================================
    INITIALIZE FIREBASE
-===================================================== */
+================================ */
 
-firebase.initializeApp(firebaseConfig);
+try{
 
-const auth = firebase.auth();
+    firebase.initializeApp(firebaseConfig);
 
-const db = firebase.database();
+    console.log("STEP 3: Firebase initialized");
 
+}catch(error){
 
-/* =====================================================
-   ELEMENTS
-===================================================== */
+    console.error("FIREBASE INIT ERROR:",error);
 
-const googleBtn =
-    document.getElementById("googleBtn");
-
-const logoutBtn =
-    document.getElementById("logoutBtn");
-
-const message =
-    document.getElementById("message");
-
-const userBox =
-    document.getElementById("userBox");
-
-const userEmail =
-    document.getElementById("userEmail");
-
-const userRole =
-    document.getElementById("userRole");
-
-const userUid =
-    document.getElementById("userUid");
-
-
-/* =====================================================
-   ADMIN EMAIL
-===================================================== */
-
-const ADMIN_EMAIL =
-    "khelzkieanasco13@gmail.com";
-
-
-/* =====================================================
-   MESSAGE
-===================================================== */
-
-function showMessage(text,type){
-
-    message.textContent = text;
-
-    message.className =
-        "message " + type;
 }
 
 
-/* =====================================================
-   GOOGLE LOGIN
-===================================================== */
+/* ================================
+   AUTH
+================================ */
 
-googleBtn.addEventListener("click", async function(){
+let auth;
+
+try{
+
+    auth = firebase.auth();
+
+    console.log("STEP 4: Firebase Auth ready");
+
+}catch(error){
+
+    console.error("AUTH ERROR:",error);
+
+}
+
+
+/* ================================
+   BUTTON
+================================ */
+
+const button =
+    document.getElementById("googleBtn");
+
+const status =
+    document.getElementById("status");
+
+
+console.log(
+    "STEP 5: Button found:",
+    button
+);
+
+
+/* ================================
+   CLICK
+================================ */
+
+button.addEventListener("click",async function(){
+
+    console.log("STEP 6: BUTTON CLICKED");
+
+    status.textContent =
+        "Button clicked... starting Google Login.";
+
+    status.className = "";
+
 
     try{
 
-        googleBtn.disabled = true;
-
-        googleBtn.textContent =
-            "SIGNING IN...";
-
         const provider =
             new firebase.auth.GoogleAuthProvider();
+
 
         provider.setCustomParameters({
 
@@ -376,242 +201,82 @@ googleBtn.addEventListener("click", async function(){
 
         });
 
+
+        console.log(
+            "STEP 7: Starting signInWithPopup..."
+        );
+
+
+        status.textContent =
+            "Opening Google Login...";
+
+
         const result =
             await auth.signInWithPopup(provider);
+
+
+        console.log(
+            "STEP 8: LOGIN SUCCESS",
+            result
+        );
+
 
         const user =
             result.user;
 
-        console.log("Google User:",user);
 
-        await checkUserRole(user);
-
-    }
-
-    catch(error){
-
-        console.error(error);
-
-        showMessage(
-            error.message,
-            "error"
-        );
-
-        googleBtn.disabled = false;
-
-        googleBtn.textContent =
-            "🔐 SIGN IN WITH GOOGLE";
-    }
-
-});
-
-
-/* =====================================================
-   CHECK USER ROLE
-===================================================== */
-
-async function checkUserRole(user){
-
-    try{
-
-        const uid =
-            user.uid;
-
-        const email =
-            (user.email || "").toLowerCase();
-
-
-        /*
-         * READ:
-         * /users/<UID>
-         */
-
-        const snapshot =
-            await db.ref("users/" + uid).once("value");
-
-
-        const userData =
-            snapshot.val();
-
-
-        console.log(
-            "Firebase User Data:",
-            userData
-        );
-
-
-        /* =================================================
-           NO ROLE FOUND
-        ================================================= */
-
-        if(!userData || !userData.role){
-
-            await auth.signOut();
-
-            showMessage(
-                "ACCESS DENIED — Your Google account is not authorized for Daily Fitness.",
-                "error"
-            );
-
-            googleBtn.disabled = false;
-
-            googleBtn.textContent =
-                "🔐 SIGN IN WITH GOOGLE";
-
-            return;
-        }
-
-
-        const role =
-            String(userData.role).toUpperCase();
-
-
-        /* =================================================
-           VALID ROLES
-        ================================================= */
-
-        if(
-            role !== "ADMIN" &&
-            role !== "STAFF"
-        ){
-
-            await auth.signOut();
-
-            showMessage(
-                "ACCESS DENIED — Invalid account role.",
-                "error"
-            );
-
-            googleBtn.disabled = false;
-
-            googleBtn.textContent =
-                "🔐 SIGN IN WITH GOOGLE";
-
-            return;
-        }
-
-
-        /* =================================================
-           DISPLAY USER
-        ================================================= */
-
-        userEmail.textContent =
+        status.textContent =
+            "SUCCESS! Logged in as: " +
             user.email;
 
-        userRole.textContent =
-            "ROLE: " + role;
 
-        userUid.textContent =
-            "UID: " + uid;
-
-        userBox.style.display =
-            "block";
-
-        googleBtn.style.display =
-            "none";
+        status.className =
+            "success";
 
 
-        showMessage(
-            "Login successful. Welcome to Daily Fitness!",
-            "success"
+        alert(
+            "GOOGLE LOGIN SUCCESS!\n\n" +
+            "Email: " +
+            user.email +
+            "\n\nUID:\n" +
+            user.uid
         );
-
-
-        /* =================================================
-           SAVE SESSION
-        ================================================= */
-
-        sessionStorage.setItem(
-            "dailyFitnessRole",
-            role
-        );
-
-        sessionStorage.setItem(
-            "dailyFitnessEmail",
-            user.email || ""
-        );
-
-        sessionStorage.setItem(
-            "dailyFitnessUid",
-            uid
-        );
-
-
-        /*
-         * TEMPORARY:
-         * redirect after login
-         */
-
- setTimeout(function(){
-
-    showMessage(
-        "GOOGLE LOGIN SUCCESSFUL! Your account is authenticated.",
-        "success"
-    );
-
-},1000);
-
-    catch(error){
-
-        console.error(error);
-
-        showMessage(
-            "Unable to verify your account. " +
-            error.message,
-            "error"
-        );
-
-        googleBtn.disabled = false;
-
-        googleBtn.textContent =
-            "🔐 SIGN IN WITH GOOGLE";
-    }
-
-}
-
-
-/* =====================================================
-   LOGOUT
-===================================================== */
-
-logoutBtn.addEventListener("click",async function(){
-
-    try{
-
-        await auth.signOut();
-
-        sessionStorage.clear();
-
-        location.reload();
 
     }
 
     catch(error){
 
-        console.error(error);
+        console.error(
+            "GOOGLE LOGIN ERROR:",
+            error
+        );
+
+
+        status.textContent =
+            "ERROR: " +
+            error.code +
+            "\n" +
+            error.message;
+
+
+        status.className =
+            "error";
+
+
+        alert(
+            "GOOGLE LOGIN ERROR:\n\n" +
+            error.code +
+            "\n\n" +
+            error.message
+        );
 
     }
 
 });
 
-
-/* =====================================================
-   AUTH STATE
-===================================================== */
-
-auth.onAuthStateChanged(async function(user){
-
-    if(!user){
-
-        return;
-    }
-
-    console.log(
-        "Already signed in:",
-        user.email
-    );
-
-});
+console.log(
+    "STEP 9: Click handler ready"
+);
 
 </script>
 

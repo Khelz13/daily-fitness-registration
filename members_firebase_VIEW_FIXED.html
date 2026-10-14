@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Monthly Members - Daily Fitness</title>
+
+    <style>
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+        }
+
+        .header {
+            background: #111111;
+            color: #111111;
+            padding: 20px 30px;
+        }
+
+        .header h1 {
+            margin: 0;
+        }
+
+        .container {
+            padding: 30px;
+        }
+
+        .form-box {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            max-width: 600px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            box-sizing: border-box;
+            border: 1px solid #d4d4d4;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        .save-btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            background: #111111;
+            color: #111111;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .save-btn:hover {
+            background: #333333;
+        }
+
+        .back-btn {
+            margin-top: 20px;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            background: #facc15;
+            cursor: pointer;
+        }
+
+        .search-box {
+            margin-top: 20px;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .search-box input {
+            width: 100%;
+        }
+
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #e5e5e5;
+            text-align: left;
+        }
+
+        th {
+            background: #111111;
+            color: #111111;
+        }
+
+        .status-active {
+            color: #16a34a;
+            font-weight: bold;
+        }
+
+        .status-expired {
+            color: #dc2626;
+            font-weight: bold;
+        }
+
+        .days-left {
+            font-weight: bold;
+        }
+
+        .view-btn {
+            background: #facc15;
+            color: #111111;
+            border: none;
+            padding: 7px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+
+        .view-btn:hover {
+            background: #eab308;
+        }
+
+        .edit-btn {
+            background: #facc15;
+            color: #111111;
+            border: none;
+            padding: 7px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+
+        .edit-btn:hover {
+            background: #eab308;
+        }
+
+        .delete-btn {
+            background: #dc2626;
+            color: #111111;
+            border: none;
+            padding: 7px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .delete-btn:hover {
+            background: #b91c1c;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        .edit-box {
+            display: none;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            max-width: 600px;
+            margin-bottom: 30px;
+        }
+
+        .edit-box h2 {
+            margin-top: 0;
+        }
+
+        .update-btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            background: #facc15;
+            color: #111111;
+            font-size: 16px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+
+        .update-btn:hover {
+            background: #eab308;
+        }
+
+        .cancel-btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            background: #facc15;
+            color: #111111;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .cancel-btn:hover {
+            background: #d1d5db;
+        }
+
+        @media (max-width: 900px) {
+
+            .container {
+                padding: 20px;
+                overflow-x: auto;
+            }
+
+            table {
+                min-width: 1100px;
+            }
+
+        }
+
+    
+        .role-banner {
+            margin: 0 0 25px;
+            padding: 15px 20px;
+            border-radius: 12px;
+            font-weight: 700;
+            border: 1px solid;
+        }
+        .role-admin {
+            background: #fef9c3;
+            color: #854d0e;
+            border-color: #facc15;
+        }
+        .role-staff {
+            background: #fef9c3;
+            color: #854d0e;
+            border-color: #facc15;
+        }
+
+    
+        /* BLACK & YELLOW DAILY FITNESS THEME */
+        :root { color-scheme: light; }
+        body { background: #f5f5f5; color: #171717; }
+        .header { background: #111111; color: #facc15; border-bottom: 5px solid #facc15; }
+        .header p { color: #ffffff; }
+        h2 { color: #111111; }
+        .form-box, .edit-box, .search-box { border: 1px solid #e5e5e5; }
+        label { color: #262626; }
+        input:focus { outline: 2px solid #facc15; border-color: #eab308; }
+        .save-btn, .update-btn, .view-btn, .edit-btn {
+            background: #facc15; color: #111111; font-weight: 700;
+        }
+        .save-btn:hover, .update-btn:hover, .view-btn:hover, .edit-btn:hover {
+            background: #eab308; color: #111111;
+        }
+        .back-btn, .cancel-btn { background: #262626; color: #facc15; font-weight: 700; }
+        .back-btn:hover, .cancel-btn:hover { background: #404040; }
+        th { background: #111111; color: #facc15; }
+        tbody tr:hover { background: #fefce8; }
+        .status-active { color: #15803d; }
+        .status-expired { color: #dc2626; }
+        .delete-btn { background: #dc2626; color: #ffffff; }
+        .delete-btn:hover { background: #b91c1c; color: #ffffff; }
+        .role-admin, .role-staff { background: #fef9c3; color: #713f12; border-color: #facc15; }
+
+    
+/* Daily Fitness black-and-yellow theme override */
+:root { color-scheme: dark; --df-yellow:#facc15; --df-yellow-deep:#eab308; --df-black:#070707; --df-panel:#111111; --df-panel-2:#171717; --df-line:#303030; --df-white:#f8fafc; --df-muted:#a3a3a3; }
+html, body { background:var(--df-black) !important; color:var(--df-white) !important; }
+body { font-family:Arial,Helvetica,sans-serif !important; }
+header, .header, .topbar, nav { background:linear-gradient(135deg,#050505,#151515) !important; color:var(--df-white) !important; border-bottom:4px solid var(--df-yellow) !important; }
+h1,h2,h3,h4,label,th,strong { color:var(--df-white); }
+h1,.brand,.yellow,.accent { color:var(--df-yellow) !important; }
+main,.container,.content,.section,.card,.panel,.form-card,.table-container,.modal-content,.member-form,.members-list,.table-wrapper { background:var(--df-panel) !important; color:var(--df-white) !important; border-color:var(--df-line) !important; }
+input,select,textarea { background:#080808 !important; color:var(--df-white) !important; border:1px solid #3a3a3a !important; }
+input::placeholder,textarea::placeholder { color:#888 !important; }
+button,.btn { background:var(--df-panel-2) !important; color:var(--df-white) !important; border:1px solid #414141 !important; }
+button:hover,.btn:hover { border-color:var(--df-yellow) !important; }
+button[type=submit],.btn-primary,.primary,#saveBtn,#addMemberBtn { background:var(--df-yellow) !important; color:#050505 !important; border-color:var(--df-yellow) !important; font-weight:800 !important; }
+table { background:var(--df-panel) !important; color:var(--df-white) !important; }
+thead,th { background:#1b1b1b !important; color:var(--df-yellow) !important; }
+td,tr { border-color:#303030 !important; }
+tbody tr:nth-child(even) { background:#151515 !important; }
+a { color:var(--df-yellow) !important; }
+hr { border-color:#303030 !important; }
+
+</style>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+</head>
+
+<body>
+
+
+    <div class="header">
+
+        <h1>Daily Fitness</h1>
+
+        <p>Monthly Members</p>
+
+    </div>
+
+
+    <div class="container">
+
+
+        <h2>Register New Member</h2>
+
+
+        <div class="form-box">
+
+            <div class="form-group">
+
+                <label>Member Name</label>
+
+                <input
+                    type="text"
+                    id="memberName"
+                    placeholder="Enter member name"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Contact Number</label>
+
+                <input
+                    type="text"
+                    id="memberContact"
+                    placeholder="09XXXXXXXXX"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Start Date</label>
+
+                <input
+                    type="date"
+                    id="startDate"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Monthly Fee</label>
+
+                <input
+                    type="number"
+                    id="memberFee"
+                    value="600"
+                >
+
+            </div>
+
+
+            <button
+                class="save-btn"
+                onclick="saveMember()"
+            >
+                💾 Register Member
+            </button>
+
+        </div>
+
+
+        <!-- EDIT MEMBER -->
+
+        <div
+            class="edit-box"
+            id="editBox"
+        >
+
+            <h2>✏️ Edit Member</h2>
+
+
+            <div class="form-group">
+
+                <label>Member Name</label>
+
+                <input
+                    type="text"
+                    id="editName"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Contact Number</label>
+
+                <input
+                    type="text"
+                    id="editContact"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Start Date</label>
+
+                <input
+                    type="date"
+                    id="editStartDate"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Monthly Fee</label>
+
+                <input
+                    type="number"
+                    id="editFee"
+                >
+
+            </div>
+
+
+            <button
+                class="update-btn"
+                onclick="updateMember()"
+            >
+                💾 Save Changes
+            </button>
+
+
+            <button
+                class="cancel-btn"
+                onclick="cancelEdit()"
+            >
+                Cancel
+            </button>
+
+        </div>
+
+
+        <button
+            class="back-btn"
+            onclick="window.location.href='index.html'"
+        >
+            ← Back to Dashboard
+        </button>
+
+
+        <h2>Registered Members</h2>
+
+
+        <div class="search-box">
+
+            <label>
+                🔎 Search Member
+            </label>
+
+            <input
+                type="text"
+                id="memberSearch"
+                placeholder="Type member name or contact..."
+                oninput="displayMembers()"
+            >
+
+        </div>
+
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>Member</th>
+
+                    <th>Contact</th>
+
+                    <th>Start Date</th>
+
+                    <th>Expiry Date</th>
+
+                    <th>Days Left</th>
+
+                    <th>Fee</th>
+
+                    <th>Status</th>
+
+                    <th>Action</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody id="membersTableBody">
+            </tbody>
+
+        </table>
+
+
+    </div>
+
+
+<script>
+/* =========================================================
+   DAILY FITNESS — MEMBERS / FIREBASE VERSION
+   Firebase Realtime Database is now the main source of truth.
+   LocalStorage is kept as a compatibility cache for existing
+   pages until the rest of the system is migrated.
+   ========================================================= */
+
+const firebaseConfig = {
+    apiKey: "AIzaSyDGI2ZhwFbhEF40nhC-TxePjP0rNBtDMA",
+    authDomain: "daily-fitness-8f4bb.firebaseapp.com",
+    databaseURL: "https://daily-fitness-8f4bb-default-rtdb.firebaseio.com",
+    projectId: "daily-fitness-8f4bb",
+    storageBucket: "daily-fitness-8f4bb.firebasestorage.app",
+    messagingSenderId: "27440670515",
+    appId: "1:27440670515:web:7292f1ee2573a25fc18046",
+    measurementId: "G-SBQXSXIDML1"
+};
+
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+
+const db = firebase.database();
+const membersRef = db.ref("members");
+
+let editingMemberId = null;
+let firebaseMembers = [];
+let firebaseReady = false;
+
+/* ---------------------------------------------------------
+   SESSION / ROLE
+--------------------------------------------------------- */
+function getSession() {
+    const keys = ["dailyFitnessSession"];
+
+    for (const storage of [sessionStorage, localStorage]) {
+        for (const key of keys) {
+            try {
+                const value = JSON.parse(storage.getItem(key) || "null");
+                if (value) return value;
+            } catch (e) {}
+        }
+    }
+
+    return null;
+}
+
+const currentUser = getSession();
+
+function getRole() {
+    return String((currentUser && currentUser.role) || "").toLowerCase();
+}
+
+function isAdmin() {
+    return getRole() === "admin";
+}
+
+function isStaff() {
+    return getRole() === "staff";
+}
+
+function canManageMembers() {
+    /*
+       During this migration stage, allow the page to work even if
+       the old local session is absent. Final Firebase Auth rules will
+       become the real security layer later.
+    */
+    return true;
+}
+
+function updateRoleBanner() {
+    const banner = document.getElementById("roleBanner");
+    if (!banner) return;
+
+    if (isAdmin()) {
+        banner.className = "role-banner role-admin";
+        banner.innerHTML = "👑 ADMIN MODE — Full member management access";
+    } else if (isStaff()) {
+        banner.className = "role-banner role-staff";
+        banner.innerHTML = "👤 STAFF MODE — You can register and edit members. Delete is Admin-only.";
+    } else {
+        banner.className = "role-banner role-staff";
+        banner.innerHTML = "☁️ FIREBASE MODE — Members are now shared through the cloud database.";
+    }
+}
+
+/* ---------------------------------------------------------
+   DATE HELPERS
+--------------------------------------------------------- */
+function formatDateLocal(date) {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, "0");
+    const d = String(date.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
+}
+
+function addOneMonth(dateString) {
+    const parts = String(dateString).split("-").map(Number);
+    if (parts.length !== 3 || parts.some(Number.isNaN)) return "";
+
+    const year = parts[0];
+    const month = parts[1] - 1;
+    const day = parts[2];
+
+    const date = new Date(year, month, day);
+    date.setMonth(date.getMonth() + 1);
+    return formatDateLocal(date);
+}
+
+function setStartDate() {
+    const input = document.getElementById("startDate");
+    if (!input) return;
+    input.value = formatDateLocal(new Date());
+}
+
+/* ---------------------------------------------------------
+   LOCAL STORAGE COMPATIBILITY
+--------------------------------------------------------- */
+function getLocalMembers() {
+    try {
+        return JSON.parse(localStorage.getItem("dailyFitnessMembers") || "[]") || [];
+    } catch (e) {
+        return [];
+    }
+}
+
+function saveLocalMembers(members) {
+    localStorage.setItem("dailyFitnessMembers", JSON.stringify(members));
+}
+
+function syncFirebaseToLocal(members) {
+    saveLocalMembers(members);
+}
+
+/* ---------------------------------------------------------
+   ONE-TIME MIGRATION OF EXISTING LOCAL MEMBERS
+--------------------------------------------------------- */
+async function migrateLocalMembersToFirebase(existingFirebaseMembers) {
+    const localMembers = getLocalMembers();
+    if (!localMembers.length) return;
+
+    const firebaseById = new Map(
+        existingFirebaseMembers.map(member => [String(member.id), member])
+    );
+
+    const updates = {};
+    let added = 0;
+
+    localMembers.forEach(member => {
+        if (!member || member.id === undefined || member.id === null) return;
+
+        const key = String(member.id);
+
+        if (!firebaseById.has(key)) {
+            updates[key] = {
+                id: member.id,
+                name: member.name || "",
+                contact: member.contact || "",
+                startDate: member.startDate || "",
+                expiryDate: member.expiryDate || addOneMonth(member.startDate),
+                fee: Number(member.fee) || 600,
+                createdAt: member.createdAt || firebase.database.ServerValue.TIMESTAMP
+            };
+            added++;
+        }
+    });
+
+    if (added > 0) {
+        await membersRef.update(updates);
+    }
+}
+
+/* ---------------------------------------------------------
+   SAVE MEMBER
+--------------------------------------------------------- */
+async function saveMember() {
+    if (!canManageMembers()) return;
+
+    const name = document.getElementById("memberName").value.trim();
+    const contact = document.getElementById("memberContact").value.trim();
+    const startDate = document.getElementById("startDate").value;
+    const fee = Number(document.getElementById("memberFee").value);
+
+    if (!name) {
+        alert("Please enter member name.");
+        return;
+    }
+
+    if (!startDate) {
+        alert("Please select start date.");
+        return;
+    }
+
+    if (!fee || fee <= 0) {
+        alert("Please enter a valid monthly fee.");
+        return;
+    }
+
+    const id = Date.now();
+    const member = {
+        id,
+        name,
+        contact,
+        startDate,
+        expiryDate: addOneMonth(startDate),
+        fee,
+        createdAt: firebase.database.ServerValue.TIMESTAMP
+    };
+
+    try {
+        await membersRef.child(String(id)).set(member);
+
+        document.getElementById("memberName").value = "";
+        document.getElementById("memberContact").value = "";
+        document.getElementById("memberFee").value = "600";
+
+        alert("Member registered successfully! ☁️");
+    } catch (error) {
+        console.error(error);
+        alert("Unable to save member to Firebase.\n\n" + error.message);
+    }
+}
+
+/* ---------------------------------------------------------
+   DISPLAY MEMBERS
+--------------------------------------------------------- */
+function displayMembers() {
+    const table = document.getElementById("membersTableBody");
+    if (!table) return;
+
+    const searchInput = document.getElementById("memberSearch");
+    const search = (searchInput ? searchInput.value : "").trim().toLowerCase();
+
+    table.innerHTML = "";
+
+    const filteredMembers = firebaseMembers.filter(member => {
+        const name = String(member.name || "").toLowerCase();
+        const contact = String(member.contact || "").toLowerCase();
+        return name.includes(search) || contact.includes(search);
+    });
+
+    if (!filteredMembers.length) {
+        table.innerHTML = `
+            <tr>
+                <td colspan="8" class="no-results">
+                    ${firebaseReady ? "No members found." : "Loading members from Firebase..."}
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    filteredMembers.forEach(member => {
+        const expiryDate = new Date(member.expiryDate);
+        expiryDate.setHours(0, 0, 0, 0);
+
+        const difference = expiryDate - today;
+        const daysLeft = Math.ceil(difference / (1000 * 60 * 60 * 24));
+
+        let status = "Active";
+        let statusClass = "status-active";
+        let daysText = daysLeft + " days";
+
+        if (daysLeft < 0) {
+            status = "Expired";
+            statusClass = "status-expired";
+            daysText = Math.abs(daysLeft) + " days ago";
+        } else if (daysLeft === 0) {
+            status = "Active";
+            daysText = "Expires today";
+        }
+
+        const row = document.createElement("tr");
+        const safeId = String(member.id);
+
+        row.innerHTML = `
+            <td>${escapeHtml(member.name)}</td>
+            <td>${escapeHtml(member.contact || "-")}</td>
+            <td>${escapeHtml(member.startDate || "-")}</td>
+            <td>${escapeHtml(member.expiryDate || "-")}</td>
+            <td class="days-left">${daysText}</td>
+            <td>₱${Number(member.fee || 0).toLocaleString("en-PH", {minimumFractionDigits: 2})}</td>
+            <td class="${statusClass}">${status}</td>
+            <td>
+                <button class="view-btn" onclick="viewMember('${escapeJs(safeId)}')">👁️ View</button>
+                <button class="edit-btn" onclick="editMember('${escapeJs(safeId)}')">✏️ Edit</button>
+                ${isAdmin() ? `<button class="delete-btn" onclick="deleteMember('${escapeJs(safeId)}')">Delete</button>` : `<span style="color:#64748b;font-weight:700;font-size:13px;">🔒 Admin Delete</span>`}
+            </td>
+        `;
+
+        table.appendChild(row);
+    });
+}
+
+function escapeHtml(value) {
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+function escapeJs(value) {
+    return String(value ?? "").replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+}
+
+/* ---------------------------------------------------------
+   VIEW MEMBER
+--------------------------------------------------------- */
+function viewMember(id) {
+    window.location.href = "member-profile_firebase.html?id=" + encodeURIComponent(id);
+}
+
+/* ---------------------------------------------------------
+   EDIT MEMBER
+--------------------------------------------------------- */
+function editMember(id) {
+    const member = firebaseMembers.find(item => String(item.id) === String(id));
+
+    if (!member) {
+        alert("Member not found.");
+        return;
+    }
+
+    editingMemberId = String(id);
+
+    document.getElementById("editName").value = member.name || "";
+    document.getElementById("editContact").value = member.contact || "";
+    document.getElementById("editStartDate").value = member.startDate || "";
+    document.getElementById("editFee").value = Number(member.fee) || 600;
+    document.getElementById("editBox").style.display = "block";
+
+    document.getElementById("editBox").scrollIntoView({behavior:"smooth"});
+}
+
+/* ---------------------------------------------------------
+   UPDATE MEMBER
+--------------------------------------------------------- */
+async function updateMember() {
+    if (!editingMemberId) return;
+
+    const name = document.getElementById("editName").value.trim();
+    const contact = document.getElementById("editContact").value.trim();
+    const startDate = document.getElementById("editStartDate").value;
+    const fee = Number(document.getElementById("editFee").value);
+
+    if (!name) {
+        alert("Please enter member name.");
+        return;
+    }
+
+    if (!startDate) {
+        alert("Please select start date.");
+        return;
+    }
+
+    if (!fee || fee <= 0) {
+        alert("Please enter a valid monthly fee.");
+        return;
+    }
+
+    const updatedMember = {
+        id: firebaseMembers.find(m => String(m.id) === String(editingMemberId))?.id || editingMemberId,
+        name,
+        contact,
+        startDate,
+        expiryDate: addOneMonth(startDate),
+        fee,
+        updatedAt: firebase.database.ServerValue.TIMESTAMP
+    };
+
+    try {
+        await membersRef.child(String(editingMemberId)).update(updatedMember);
+        alert("Member updated successfully! ☁️");
+        cancelEdit();
+    } catch (error) {
+        console.error(error);
+        alert("Unable to update member in Firebase.\n\n" + error.message);
+    }
+}
+
+function cancelEdit() {
+    editingMemberId = null;
+    document.getElementById("editBox").style.display = "none";
+}
+
+/* ---------------------------------------------------------
+   DELETE MEMBER
+--------------------------------------------------------- */
+async function deleteMember(id) {
+    if (!isAdmin()) {
+        alert("Only Admin can delete members.");
+        return;
+    }
+
+    if (!confirm("Delete this member?\n\nThis will remove the member from Firebase.")) {
+        return;
+    }
+
+    try {
+        await membersRef.child(String(id)).remove();
+        alert("Member deleted successfully.");
+    } catch (error) {
+        console.error(error);
+        alert("Unable to delete member from Firebase.\n\n" + error.message);
+    }
+}
+
+/* ---------------------------------------------------------
+   FIREBASE REALTIME LISTENER
+--------------------------------------------------------- */
+membersRef.on("value", async snapshot => {
+    const data = snapshot.val() || {};
+
+    firebaseMembers = Object.keys(data).map(key => ({
+        ...data[key],
+        id: data[key]?.id ?? key
+    }));
+
+    firebaseMembers.sort((a, b) => {
+        const aName = String(a.name || "").toLowerCase();
+        const bName = String(b.name || "").toLowerCase();
+        return aName.localeCompare(bName);
+    });
+
+    try {
+        await migrateLocalMembersToFirebase(firebaseMembers);
+    } catch (error) {
+        console.error("Local member migration failed:", error);
+    }
+
+    firebaseReady = true;
+    syncFirebaseToLocal(firebaseMembers);
+    displayMembers();
+}, error => {
+    console.error("Firebase members listener error:", error);
+    firebaseReady = false;
+
+    const table = document.getElementById("membersTableBody");
+    if (table) {
+        table.innerHTML = `
+            <tr>
+                <td colspan="8" class="no-results" style="color:#dc2626;">
+                    ❌ Firebase error: ${escapeHtml(error.message || "Unable to load members.")}
+                </td>
+            </tr>
+        `;
+    }
+});
+
+/* ---------------------------------------------------------
+   START PAGE
+--------------------------------------------------------- */
+setStartDate();
+updateRoleBanner();
+displayMembers();
+
+</script>
+
+
+</body>
+</html>

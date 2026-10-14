@@ -1,0 +1,2638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Payments - Daily Fitness</title>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+
+<style>
+
+*{
+    box-sizing:border-box;
+}
+
+:root{
+    --yellow:#ffd000;
+    --yellow2:#ffea70;
+    --black:#070707;
+    --panel:#111;
+    --panel2:#171717;
+    --line:#292929;
+    --muted:#9b9b9b;
+    --green:#32d36b;
+    --red:#ff5d5d;
+    --blue:#57a7ff;
+}
+
+body{
+    margin:0;
+    background:
+        radial-gradient(
+            circle at top right,
+            #2b2600 0,
+            #070707 35%,
+            #050505 100%
+        );
+    color:#fff;
+    font-family:Arial,Helvetica,sans-serif;
+    min-height:100vh;
+}
+
+
+/* =========================
+   HEADER
+========================= */
+
+.header{
+    position:sticky;
+    top:0;
+    z-index:10;
+
+    background:rgba(7,7,7,.94);
+
+    backdrop-filter:blur(10px);
+
+    border-bottom:1px solid var(--line);
+
+    padding:20px 30px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:14px;
+}
+
+.brand-mark{
+    width:46px;
+    height:46px;
+
+    border-radius:12px;
+
+    background:var(--yellow);
+
+    color:#000;
+
+    display:grid;
+    place-items:center;
+
+    font-size:25px;
+    font-weight:900;
+}
+
+.brand h1{
+    font-size:22px;
+    margin:0;
+    letter-spacing:1px;
+}
+
+.brand p{
+    margin:4px 0 0;
+
+    color:#999;
+
+    font-size:11px;
+
+    letter-spacing:3px;
+}
+
+.user{
+    text-align:right;
+}
+
+.user strong{
+    display:block;
+}
+
+.badge{
+    display:inline-block;
+
+    margin-top:5px;
+
+    padding:5px 10px;
+
+    border-radius:20px;
+
+    background:#292000;
+
+    color:var(--yellow);
+
+    border:1px solid #6e5800;
+
+    font-size:11px;
+
+    font-weight:800;
+}
+
+.logout{
+    margin-left:10px;
+
+    border:1px solid #3a3a3a;
+
+    background:#191919;
+
+    color:#fff;
+
+    border-radius:9px;
+
+    padding:9px 13px;
+
+    cursor:pointer;
+}
+
+.logout:hover{
+    border-color:var(--yellow);
+    color:var(--yellow);
+}
+
+
+/* =========================
+   MAIN
+========================= */
+
+.container{
+    max-width:1400px;
+
+    margin:auto;
+
+    padding:28px;
+}
+
+.hero{
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:end;
+
+    gap:20px;
+
+    margin-bottom:22px;
+}
+
+.hero h2{
+    font-size:32px;
+
+    margin:0 0 5px;
+}
+
+.hero p{
+    margin:0;
+
+    color:#888;
+}
+
+.accent{
+    color:var(--yellow);
+}
+
+.firebase{
+    font-size:12px;
+
+    color:var(--green);
+
+    font-weight:700;
+}
+
+
+/* =========================
+   GRID
+========================= */
+
+.grid{
+    display:grid;
+
+    grid-template-columns:1.1fr .9fr;
+
+    gap:20px;
+}
+
+.card{
+    background:
+        linear-gradient(
+            180deg,
+            #151515,
+            #0e0e0e
+        );
+
+    border:1px solid var(--line);
+
+    border-radius:18px;
+
+    padding:22px;
+
+    box-shadow:
+        0 15px 40px rgba(0,0,0,.22);
+}
+
+.card h3{
+    margin:0 0 18px;
+
+    font-size:18px;
+}
+
+
+/* =========================
+   FORM
+========================= */
+
+.form-grid{
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:15px;
+}
+
+.field{
+    margin-bottom:2px;
+}
+
+.field.full{
+    grid-column:1/-1;
+}
+
+.field label{
+    display:block;
+
+    font-size:12px;
+
+    color:#aaa;
+
+    margin-bottom:7px;
+
+    font-weight:700;
+}
+
+.field input,
+.field select{
+
+    width:100%;
+
+    padding:13px 14px;
+
+    border-radius:10px;
+
+    border:1px solid #333;
+
+    background:#090909;
+
+    color:#fff;
+
+    outline:none;
+}
+
+.field input:focus,
+.field select:focus{
+
+    border-color:var(--yellow);
+
+    box-shadow:
+        0 0 0 2px
+        rgba(255,208,0,.08);
+}
+
+
+/* =========================
+   MEMBER PREVIEW
+========================= */
+
+.member-info{
+
+    display:none;
+
+    margin-top:15px;
+
+    border:1px solid #3b3200;
+
+    background:#171300;
+
+    border-radius:12px;
+
+    padding:14px;
+}
+
+.member-info.show{
+    display:block;
+}
+
+.info-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(3,1fr);
+
+    gap:10px;
+}
+
+.info-item span{
+
+    display:block;
+
+    color:#777;
+
+    font-size:10px;
+
+    text-transform:uppercase;
+}
+
+.info-item strong{
+
+    display:block;
+
+    margin-top:3px;
+
+    font-size:14px;
+}
+
+.expiry-good{
+    color:var(--green);
+}
+
+.expiry-warn{
+    color:var(--yellow);
+}
+
+.expiry-bad{
+    color:var(--red);
+}
+
+
+/* =========================
+   SAVE BUTTON
+========================= */
+
+.save{
+
+    margin-top:18px;
+
+    width:100%;
+
+    padding:15px;
+
+    border:0;
+
+    border-radius:11px;
+
+    background:var(--yellow);
+
+    color:#000;
+
+    font-weight:900;
+
+    font-size:15px;
+
+    cursor:pointer;
+
+    transition:.2s;
+}
+
+.save:hover{
+
+    background:var(--yellow2);
+
+    transform:translateY(-1px);
+}
+
+.save:disabled{
+
+    opacity:.5;
+
+    cursor:not-allowed;
+}
+
+
+/* =========================
+   SUMMARY
+========================= */
+
+.summary{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(3,1fr);
+
+    gap:12px;
+}
+
+.stat{
+
+    background:#0a0a0a;
+
+    border:1px solid #252525;
+
+    border-radius:13px;
+
+    padding:16px;
+}
+
+.stat small{
+    color:#888;
+}
+
+.stat strong{
+
+    display:block;
+
+    font-size:24px;
+
+    margin-top:6px;
+}
+
+.yellow{
+    color:var(--yellow);
+}
+
+.green{
+    color:var(--green);
+}
+
+.blue{
+    color:var(--blue);
+}
+
+
+/* =========================
+   SEARCH
+========================= */
+
+.search{
+    margin-bottom:14px;
+}
+
+.search input{
+
+    width:100%;
+
+    padding:13px;
+
+    border-radius:10px;
+
+    border:1px solid #333;
+
+    background:#090909;
+
+    color:#fff;
+
+    outline:none;
+}
+
+.search input:focus{
+
+    border-color:var(--yellow);
+}
+
+
+/* =========================
+   TABLE
+========================= */
+
+.table-wrap{
+
+    overflow:auto;
+
+    border:1px solid var(--line);
+
+    border-radius:13px;
+}
+
+table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+    min-width:900px;
+}
+
+th,
+td{
+
+    padding:13px 12px;
+
+    border-bottom:1px solid #222;
+
+    text-align:left;
+
+    font-size:13px;
+}
+
+th{
+
+    background:#0a0a0a;
+
+    color:#aaa;
+
+    font-size:11px;
+
+    text-transform:uppercase;
+
+    letter-spacing:.5px;
+}
+
+tr:hover td{
+
+    background:#151515;
+}
+
+.amount{
+
+    font-weight:900;
+
+    color:var(--yellow);
+}
+
+.method-cash{
+
+    color:#7dff9c;
+
+    font-weight:800;
+}
+
+.method-gcash{
+
+    color:#6eb3ff;
+
+    font-weight:800;
+}
+
+.type{
+
+    font-weight:800;
+}
+
+.type-renewal{
+
+    color:var(--yellow);
+}
+
+.type-monthly{
+
+    color:#fff;
+}
+
+
+/* =========================
+   DELETE
+========================= */
+
+.delete{
+
+    border:1px solid #542020;
+
+    background:#230f0f;
+
+    color:#ff8b8b;
+
+    border-radius:7px;
+
+    padding:6px 9px;
+
+    cursor:pointer;
+}
+
+.delete:hover{
+
+    background:#401313;
+}
+
+
+/* =========================
+   LOCKED
+========================= */
+
+.locked{
+
+    color:#666;
+
+    font-size:11px;
+
+    font-weight:700;
+}
+
+
+/* =========================
+   EMPTY
+========================= */
+
+.empty{
+
+    text-align:center;
+
+    color:#777;
+
+    padding:30px;
+}
+
+
+/* =========================
+   NOTICE
+========================= */
+
+.notice{
+
+    margin-bottom:20px;
+
+    border:1px solid #3b3200;
+
+    background:#171300;
+
+    color:#d8c77a;
+
+    border-radius:12px;
+
+    padding:13px;
+
+    font-size:13px;
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:900px){
+
+    .grid{
+        grid-template-columns:1fr;
+    }
+
+    .hero{
+
+        align-items:start;
+
+        flex-direction:column;
+    }
+
+    .form-grid{
+
+        grid-template-columns:1fr;
+    }
+
+    .field.full{
+
+        grid-column:auto;
+    }
+
+    .summary{
+
+        grid-template-columns:1fr;
+    }
+
+    .info-grid{
+
+        grid-template-columns:1fr 1fr;
+    }
+
+    .header{
+
+        padding:16px 18px;
+    }
+
+    .container{
+
+        padding:18px;
+    }
+
+    .user{
+
+        display:none;
+    }
+
+}
+
+
+/* DAILY FITNESS — MATCHING BLACK & YELLOW THEME */
+.header {
+    background: rgba(7,7,7,.97);
+    border-bottom: 4px solid var(--yellow);
+}
+.brand h1 { color: var(--yellow); }
+.brand p { color: #f5f5f5; }
+.hero h2, .card h3 { color: #fff; }
+.card { border-color: #333; }
+th {
+    background: #111111;
+    color: var(--yellow);
+}
+tr:hover td { background: #211d08; }
+.field input:focus, .field select:focus, .search input:focus {
+    border-color: var(--yellow);
+    box-shadow: 0 0 0 2px rgba(255,208,0,.16);
+}
+.save {
+    background: var(--yellow);
+    color: #111;
+    font-weight: 900;
+}
+.save:hover { background: #eab900; }
+.logout {
+    background: #181818;
+    color: var(--yellow);
+    border-color: #454545;
+}
+.logout:hover { background: #262626; border-color: var(--yellow); color: var(--yellow); }
+.stat { border-color: #343434; }
+.green, .blue, .method-cash, .method-gcash { color: var(--yellow); }
+.notice, .member-info {
+    background: #191600;
+    border-color: #665500;
+}
+.notice { color: #f5df70; }
+.expiry-good { color: #facc15; }
+.expiry-warn { color: #fff0a3; }
+.expiry-bad { color: var(--red); }
+.delete {
+    background: #260e0e;
+    color: #ff8b8b;
+    border-color: #633030;
+}
+.delete:hover { background: #401313; }
+
+</style>
+</head>
+
+
+<body>
+
+
+<header class="header">
+
+    <div class="brand">
+
+        <div class="brand-mark">
+            ₱
+        </div>
+
+        <div>
+
+            <h1>
+                DAILY FITNESS
+            </h1>
+
+            <p>
+                STRONGER EVERY DAY
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="user">
+
+        <strong id="loggedUser">
+            Daily Fitness
+        </strong>
+
+        <span
+            class="badge"
+            id="roleBadge"
+        >
+            STAFF
+        </span>
+
+        <button
+            class="logout"
+            onclick="logout()"
+        >
+            Logout
+        </button>
+
+    </div>
+
+</header>
+
+
+<main class="container">
+
+
+<section class="hero">
+
+    <div>
+
+        <h2>
+            Payments
+            <span class="accent">
+                Management
+            </span>
+        </h2>
+
+        <p>
+            Record monthly payments
+            and renew memberships.
+        </p>
+
+    </div>
+
+
+    <div class="firebase">
+        ● Firebase Connected
+    </div>
+
+</section>
+
+
+<div
+    id="accessNotice"
+    class="notice"
+></div>
+
+
+<section class="grid">
+
+
+<!-- =========================
+     PAYMENT FORM
+========================= -->
+
+<div class="card">
+
+    <h3>
+        💳 Record
+        <span class="accent">
+            Payment
+        </span>
+    </h3>
+
+
+    <div class="form-grid">
+
+
+        <div class="field full">
+
+            <label>
+                MEMBER
+            </label>
+
+            <select
+                id="paymentMember"
+            >
+
+                <option value="">
+                    Select Member
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="field">
+
+            <label>
+                PAYMENT TYPE
+            </label>
+
+            <select
+                id="paymentType"
+            >
+
+                <option value="Monthly">
+                    Monthly
+                </option>
+
+                <option value="Renewal">
+                    Renewal
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="field">
+
+            <label>
+                AMOUNT
+            </label>
+
+            <input
+                type="number"
+                id="paymentAmount"
+                value="600"
+                min="1"
+            >
+
+        </div>
+
+
+        <div class="field">
+
+            <label>
+                PAYMENT METHOD
+            </label>
+
+            <select
+                id="paymentMethod"
+            >
+
+                <option value="Cash">
+                    Cash
+                </option>
+
+                <option value="GCash">
+                    GCash
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="field">
+
+            <label>
+                PAYMENT DATE
+            </label>
+
+            <input
+                type="date"
+                id="paymentDate"
+            >
+
+        </div>
+
+
+    </div>
+
+
+    <div
+        id="memberInfo"
+        class="member-info"
+    >
+
+        <div class="info-grid">
+
+
+            <div class="info-item">
+
+                <span>
+                    Current Expiry
+                </span>
+
+                <strong
+                    id="currentExpiry"
+                >
+                    -
+                </strong>
+
+            </div>
+
+
+            <div class="info-item">
+
+                <span>
+                    New Expiry
+                </span>
+
+                <strong
+                    id="newExpiry"
+                    class="expiry-good"
+                >
+                    -
+                </strong>
+
+            </div>
+
+
+            <div class="info-item">
+
+                <span>
+                    Extension
+                </span>
+
+                <strong class="yellow">
+                    +1 Month
+                </strong>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+    <button
+        class="save"
+        id="saveBtn"
+        onclick="savePayment()"
+    >
+
+        💾 RECORD PAYMENT
+        + EXTEND MEMBERSHIP
+
+    </button>
+
+
+</div>
+
+
+<!-- =========================
+     SUMMARY
+========================= -->
+
+<div class="card">
+
+    <h3>
+
+        📊 Today's
+        <span class="accent">
+            Summary
+        </span>
+
+    </h3>
+
+
+    <div class="summary">
+
+
+        <div class="stat">
+
+            <small>
+                TOTAL SALES
+            </small>
+
+            <strong
+                class="yellow"
+                id="totalSales"
+            >
+                ₱0.00
+            </strong>
+
+        </div>
+
+
+        <div class="stat">
+
+            <small>
+                CASH
+            </small>
+
+            <strong
+                class="green"
+                id="totalCash"
+            >
+                ₱0.00
+            </strong>
+
+        </div>
+
+
+        <div class="stat">
+
+            <small>
+                GCASH
+            </small>
+
+            <strong
+                class="blue"
+                id="totalGcash"
+            >
+                ₱0.00
+            </strong>
+
+        </div>
+
+
+    </div>
+
+
+    <div
+        style="
+        margin-top:20px;
+        color:#888;
+        font-size:13px;
+        line-height:1.6;
+        "
+    >
+
+        💡
+
+        <b style="color:#fff">
+            Renewal logic:
+        </b>
+
+        The new expiry uses the later
+        of the member's current expiry
+        or payment date, then adds
+        one month.
+
+        This prevents active members
+        from losing unused days.
+
+    </div>
+
+</div>
+
+
+</section>
+
+
+<!-- =========================
+     PAYMENT RECORDS
+========================= -->
+
+<section
+    class="card"
+    style="margin-top:20px"
+>
+
+    <h3>
+
+        📋 Payment
+        <span class="accent">
+            Records
+        </span>
+
+    </h3>
+
+
+    <div class="search">
+
+        <input
+            id="paymentSearch"
+            placeholder="🔎 Search member..."
+            oninput="renderPayments()"
+        >
+
+    </div>
+
+
+    <div class="table-wrap">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Date
+                    </th>
+
+                    <th>
+                        Member
+                    </th>
+
+                    <th>
+                        Type
+                    </th>
+
+                    <th>
+                        Amount
+                    </th>
+
+                    <th>
+                        Method
+                    </th>
+
+                    <th>
+                        Recorded By
+                    </th>
+
+                    <th>
+                        Action
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody
+                id="paymentsTableBody"
+            >
+
+                <tr>
+
+                    <td
+                        colspan="7"
+                        class="empty"
+                    >
+                        Loading...
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</section>
+
+
+</main>
+
+
+<script>
+
+
+/* =================================
+   FIREBASE
+================================= */
+
+const firebaseConfig = {
+
+    apiKey:
+        "AIzaSyDGI2ZhwFbhEF40nhC-TxePjP0rNBtDMA",
+
+    authDomain:
+        "daily-fitness-8f4bb.firebaseapp.com",
+
+    databaseURL:
+        "https://daily-fitness-8f4bb-default-rtdb.firebaseio.com",
+
+    projectId:
+        "daily-fitness-8f4bb",
+
+    storageBucket:
+        "daily-fitness-8f4bb.firebasestorage.app",
+
+    messagingSenderId:
+        "27440670515",
+
+    appId:
+        "1:27440670515:web:7292f1ee2573a25fc18046",
+
+    measurementId:
+        "G-SBQXSXIDML1"
+
+};
+
+
+firebase.initializeApp(
+    firebaseConfig
+);
+
+
+const db =
+    firebase.database();
+
+
+let members = [];
+
+let payments = [];
+
+let currentUser = null;
+
+
+/* =================================
+   SESSION
+================================= */
+
+function getSession(){
+
+    try{
+
+        return JSON.parse(
+            localStorage.getItem(
+                "dailyFitnessSession"
+            )
+        ) || null;
+
+    }catch{
+
+        return null;
+
+    }
+
+}
+
+
+function isAdmin(){
+
+    return (
+        currentUser &&
+        String(
+            currentUser.role
+        ).toLowerCase() === "admin"
+    );
+
+}
+
+
+/* =================================
+   TODAY
+================================= */
+
+function getToday(){
+
+    const d =
+        new Date();
+
+    return (
+
+        d.getFullYear() +
+        "-" +
+        String(
+            d.getMonth()+1
+        ).padStart(2,"0") +
+        "-" +
+        String(
+            d.getDate()
+        ).padStart(2,"0")
+
+    );
+
+}
+
+
+/* =================================
+   MONEY
+================================= */
+
+function money(value){
+
+    return "₱" +
+
+        Number(
+            value || 0
+        ).toLocaleString(
+            "en-PH",
+            {
+                minimumFractionDigits:2,
+                maximumFractionDigits:2
+            }
+        );
+
+}
+
+
+/* =================================
+   ADD ONE MONTH
+================================= */
+
+function addOneMonth(
+    dateString
+){
+
+    const d =
+        new Date(
+            dateString +
+            "T00:00:00"
+        );
+
+    const day =
+        d.getDate();
+
+    d.setMonth(
+        d.getMonth()+1
+    );
+
+    if(
+        d.getDate() !== day
+    ){
+
+        d.setDate(0);
+
+    }
+
+    return (
+
+        d.getFullYear() +
+        "-" +
+        String(
+            d.getMonth()+1
+        ).padStart(2,"0") +
+        "-" +
+        String(
+            d.getDate()
+        ).padStart(2,"0")
+
+    );
+
+}
+
+
+/* =================================
+   LATER DATE
+================================= */
+
+function maxDate(a,b){
+
+    return (
+        (a || "") >
+        (b || "")
+    )
+    ?
+    (a || b)
+    :
+    (b || a);
+
+}
+
+
+/* =================================
+   DAYS BETWEEN
+================================= */
+
+function daysBetween(a,b){
+
+    const x =
+        new Date(
+            a +
+            "T00:00:00"
+        );
+
+    const y =
+        new Date(
+            b +
+            "T00:00:00"
+        );
+
+    return Math.round(
+        (
+            x - y
+        ) /
+        86400000
+    );
+
+}
+
+
+/* =================================
+   ESCAPE HTML
+================================= */
+
+function esc(value){
+
+    return String(
+        value ?? ""
+    )
+    .replace(
+        /&/g,
+        "&amp;"
+    )
+    .replace(
+        /</g,
+        "&lt;"
+    )
+    .replace(
+        />/g,
+        "&gt;"
+    )
+    .replace(
+        /"/g,
+        "&quot;"
+    )
+    .replace(
+        /'/g,
+        "&#039;"
+    );
+
+}
+
+
+/* =================================
+   LOGOUT
+================================= */
+
+function logout(){
+
+    if(
+        confirm(
+            "Logout from Daily Fitness?"
+        )
+    ){
+
+        localStorage.removeItem(
+            "dailyFitnessSession"
+        );
+
+        location.href =
+            "login.html";
+
+    }
+
+}
+
+
+/* =================================
+   SETUP USER
+================================= */
+
+function setupUser(){
+
+    currentUser =
+        getSession();
+
+
+    if(!currentUser){
+
+        document.getElementById(
+            "accessNotice"
+        ).textContent =
+            "No active session detected. Please log in through the Daily Fitness portal.";
+
+        document.getElementById(
+            "saveBtn"
+        ).disabled = true;
+
+        return;
+
+    }
+
+
+    document.getElementById(
+        "loggedUser"
+    ).textContent =
+
+        currentUser.name ||
+        currentUser.username ||
+        currentUser.email ||
+        "User";
+
+
+    document.getElementById(
+        "roleBadge"
+    ).textContent =
+
+        (
+            currentUser.role ||
+            "STAFF"
+        ).toUpperCase();
+
+
+    if(isAdmin()){
+
+        document.getElementById(
+            "accessNotice"
+        ).innerHTML =
+
+        "👑 <b style='color:#ffd000'>" +
+        "Admin Mode:" +
+        "</b> Full payment history and delete access are enabled.";
+
+    }else{
+
+        document.getElementById(
+            "accessNotice"
+        ).innerHTML =
+
+        "👨‍💼 <b style='color:#ffd000'>" +
+        "Staff Mode:" +
+        "</b> You can record today's payments. Past/future payment dates are locked.";
+
+    }
+
+
+    document.getElementById(
+        "paymentDate"
+    ).value =
+        getToday();
+
+
+    if(!isAdmin()){
+
+        document.getElementById(
+            "paymentDate"
+        ).disabled = true;
+
+    }
+
+}
+
+
+/* =================================
+   LOAD MEMBERS
+================================= */
+
+function loadMembers(){
+
+    db.ref(
+        "members"
+    ).on(
+        "value",
+        snapshot => {
+
+            const data =
+                snapshot.val() || {};
+
+            members =
+                Object.keys(
+                    data
+                )
+                .map(
+                    key => ({
+
+                        ...data[key],
+
+                        id:
+                            data[key]?.id ??
+                            key
+
+                    })
+                )
+                .sort(
+                    (a,b) =>
+                        String(
+                            a.name || ""
+                        )
+                        .localeCompare(
+                            String(
+                                b.name || ""
+                            )
+                        )
+                );
+
+
+            const select =
+                document.getElementById(
+                    "paymentMember"
+                );
+
+
+            select.innerHTML =
+                '<option value="">' +
+                'Select Member' +
+                '</option>';
+
+
+            members.forEach(
+                member => {
+
+                    const option =
+                        document.createElement(
+                            "option"
+                        );
+
+                    option.value =
+                        member.id;
+
+                    option.textContent =
+                        member.name;
+
+                    select.appendChild(
+                        option
+                    );
+
+                }
+            );
+
+
+            updateMemberPreview();
+
+        }
+    );
+
+}
+
+
+/* =================================
+   LOAD PAYMENTS
+================================= */
+
+function loadPayments(){
+
+    db.ref(
+        "payments"
+    ).on(
+        "value",
+        snapshot => {
+
+            const data =
+                snapshot.val() || {};
+
+
+            payments =
+                Object.keys(
+                    data
+                )
+                .map(
+                    key => ({
+
+                        ...data[key],
+
+                        id:
+                            data[key]?.id ??
+                            key
+
+                    })
+                );
+
+
+            renderPayments();
+
+            updateSummary();
+
+        }
+    );
+
+}
+
+
+/* =================================
+   SELECT MEMBER
+================================= */
+
+function selectedMember(){
+
+    return members.find(
+        member =>
+            String(
+                member.id
+            ) ===
+            String(
+                document.getElementById(
+                    "paymentMember"
+                ).value
+            )
+    );
+
+}
+
+
+/* =================================
+   NEW EXPIRY
+================================= */
+
+function calculateNewExpiry(
+    member
+){
+
+    if(!member){
+
+        return "";
+
+    }
+
+
+    const paymentDate =
+        document.getElementById(
+            "paymentDate"
+        ).value ||
+        getToday();
+
+
+    const base =
+        maxDate(
+            String(
+                member.expiryDate ||
+                ""
+            ),
+            paymentDate
+        );
+
+
+    return addOneMonth(
+        base
+    );
+
+}
+
+
+/* =================================
+   MEMBER PREVIEW
+================================= */
+
+function updateMemberPreview(){
+
+    const member =
+        selectedMember();
+
+
+    const box =
+        document.getElementById(
+            "memberInfo"
+        );
+
+
+    if(!member){
+
+        box.classList.remove(
+            "show"
+        );
+
+        return;
+
+    }
+
+
+    box.classList.add(
+        "show"
+    );
+
+
+    document.getElementById(
+        "currentExpiry"
+    ).textContent =
+
+        member.expiryDate ||
+        "-";
+
+
+    document.getElementById(
+        "newExpiry"
+    ).textContent =
+
+        calculateNewExpiry(
+            member
+        );
+
+
+    const days =
+        member.expiryDate
+        ?
+        daysBetween(
+            member.expiryDate,
+            getToday()
+        )
+        :
+        null;
+
+
+    const expiryElement =
+        document.getElementById(
+            "currentExpiry"
+        );
+
+
+    if(
+        days !== null &&
+        days < 0
+    ){
+
+        expiryElement.className =
+            "expiry-bad";
+
+    }else if(
+
+        days !== null &&
+        days <= 7
+
+    ){
+
+        expiryElement.className =
+            "expiry-warn";
+
+    }else{
+
+        expiryElement.className =
+            "expiry-good";
+
+    }
+
+}
+
+
+/* =================================
+   FORM EVENTS
+================================= */
+
+document.getElementById(
+    "paymentMember"
+)
+.addEventListener(
+    "change",
+    updateMemberPreview
+);
+
+
+document.getElementById(
+    "paymentDate"
+)
+.addEventListener(
+    "change",
+    updateMemberPreview
+);
+
+
+document.getElementById(
+    "paymentType"
+)
+.addEventListener(
+    "change",
+    updateMemberPreview
+);
+
+
+/* =================================
+   SAVE PAYMENT
+================================= */
+
+async function savePayment(){
+
+    if(!currentUser){
+
+        alert(
+            "Please log in first."
+        );
+
+        return;
+
+    }
+
+
+    const member =
+        selectedMember();
+
+
+    const type =
+        document.getElementById(
+            "paymentType"
+        ).value;
+
+
+    const amount =
+        Number(
+            document.getElementById(
+                "paymentAmount"
+            ).value
+        );
+
+
+    const method =
+        document.getElementById(
+            "paymentMethod"
+        ).value;
+
+
+    const date =
+        document.getElementById(
+            "paymentDate"
+        ).value ||
+        getToday();
+
+
+    if(!member){
+
+        alert(
+            "Please select a member."
+        );
+
+        return;
+
+    }
+
+
+    if(
+        !amount ||
+        amount <= 0
+    ){
+
+        alert(
+            "Please enter a valid payment amount."
+        );
+
+        return;
+
+    }
+
+
+    if(
+        !isAdmin() &&
+        date !== getToday()
+    ){
+
+        alert(
+            "Staff can only record payments for today."
+        );
+
+        document.getElementById(
+            "paymentDate"
+        ).value =
+            getToday();
+
+        return;
+
+    }
+
+
+    const newExpiry =
+        calculateNewExpiry(
+            member
+        );
+
+
+    if(!newExpiry){
+
+        alert(
+            "Unable to calculate new expiry date."
+        );
+
+        return;
+
+    }
+
+
+    const confirmed =
+        confirm(
+
+            "Record " +
+            type +
+            " payment of " +
+            money(amount) +
+            " for " +
+            member.name +
+            "?\n\n" +
+
+            "Current expiry: " +
+            (
+                member.expiryDate ||
+                "-"
+            ) +
+
+            "\nNew expiry: " +
+            newExpiry
+
+        );
+
+
+    if(!confirmed){
+
+        return;
+
+    }
+
+
+    const id =
+        Date.now().toString();
+
+
+    const payment = {
+
+        id:
+
+            id,
+
+        memberId:
+
+            member.id,
+
+        memberName:
+
+            member.name,
+
+        amount:
+
+            amount,
+
+        paymentMethod:
+
+            method,
+
+        paymentType:
+
+            type,
+
+        paymentDate:
+
+            date,
+
+        previousExpiry:
+
+            member.expiryDate ||
+            null,
+
+        newExpiry:
+
+            newExpiry,
+
+        recordedBy:
+
+            currentUser.username ||
+            currentUser.email ||
+            "User",
+
+        recordedByName:
+
+            currentUser.name ||
+            currentUser.email ||
+            "User",
+
+        createdAt:
+
+            firebase.database
+            .ServerValue
+            .TIMESTAMP
+
+    };
+
+
+    /*
+        IMPORTANT:
+
+        Payment record +
+        member expiry update
+
+        are written together.
+    */
+
+    const updates = {};
+
+
+    updates[
+        `payments/${id}`
+    ] = payment;
+
+
+    updates[
+        `members/${member.id}/expiryDate`
+    ] =
+        newExpiry;
+
+
+    updates[
+        `members/${member.id}/updatedAt`
+    ] =
+        firebase.database
+        .ServerValue
+        .TIMESTAMP;
+
+
+    try{
+
+        document.getElementById(
+            "saveBtn"
+        ).disabled = true;
+
+
+        await db
+            .ref()
+            .update(
+                updates
+            );
+
+
+        alert(
+
+            "Payment recorded successfully!\n\n" +
+
+            member.name +
+
+            "\nNew expiry: " +
+
+            newExpiry
+
+        );
+
+
+        document.getElementById(
+            "paymentMember"
+        ).value = "";
+
+
+        document.getElementById(
+            "paymentAmount"
+        ).value = "600";
+
+
+        document.getElementById(
+            "paymentType"
+        ).value = "Monthly";
+
+
+        document.getElementById(
+            "paymentMethod"
+        ).value = "Cash";
+
+
+        document.getElementById(
+            "paymentDate"
+        ).value =
+            getToday();
+
+
+        updateMemberPreview();
+
+
+    }catch(error){
+
+        console.error(
+            error
+        );
+
+
+        alert(
+
+            "Unable to save payment.\n\n" +
+            error.message
+
+        );
+
+    }finally{
+
+        document.getElementById(
+            "saveBtn"
+        ).disabled = false;
+
+    }
+
+}
+
+
+/* =================================
+   RENDER PAYMENTS
+================================= */
+
+function renderPayments(){
+
+    const body =
+        document.getElementById(
+            "paymentsTableBody"
+        );
+
+
+    if(!currentUser){
+
+        body.innerHTML =
+
+            '<tr>' +
+            '<td colspan="7" class="empty">' +
+            'Please log in.' +
+            '</td>' +
+            '</tr>';
+
+        return;
+
+    }
+
+
+    const search =
+        document.getElementById(
+            "paymentSearch"
+        )
+        .value
+        .trim()
+        .toLowerCase();
+
+
+    const today =
+        getToday();
+
+
+    let visible =
+        payments
+        .filter(
+
+            payment =>
+
+                isAdmin() ||
+                payment.paymentDate ===
+                today
+
+        )
+        .filter(
+
+            payment =>
+
+                String(
+                    payment.memberName ||
+                    ""
+                )
+                .toLowerCase()
+                .includes(
+                    search
+                )
+
+        );
+
+
+    visible.sort(
+
+        (a,b) =>
+
+            String(
+                b.paymentDate ||
+                ""
+            )
+            .localeCompare(
+                String(
+                    a.paymentDate ||
+                    ""
+                )
+            )
+
+            ||
+
+            (
+                Number(
+                    b.createdAt
+                ) || 0
+            )
+
+            -
+
+            (
+                Number(
+                    a.createdAt
+                ) || 0
+            )
+
+    );
+
+
+    if(!visible.length){
+
+        body.innerHTML =
+
+            '<tr>' +
+
+            '<td colspan="7" class="empty">' +
+
+            'No payment records found.' +
+
+            '</td>' +
+
+            '</tr>';
+
+        return;
+
+    }
+
+
+    body.innerHTML =
+
+        visible
+        .map(
+
+            payment => `
+
+                <tr>
+
+                    <td>
+                        ${esc(
+                            payment.paymentDate ||
+                            "-"
+                        )}
+                    </td>
+
+                    <td>
+                        <b>
+                            ${esc(
+                                payment.memberName ||
+                                "-"
+                            )}
+                        </b>
+                    </td>
+
+                    <td
+                        class="type ${
+                            payment.paymentType ===
+                            "Renewal"
+                            ?
+                            "type-renewal"
+                            :
+                            "type-monthly"
+                        }"
+                    >
+
+                        ${esc(
+                            payment.paymentType ||
+                            "Monthly"
+                        )}
+
+                    </td>
+
+                    <td class="amount">
+
+                        ${money(
+                            payment.amount
+                        )}
+
+                    </td>
+
+                    <td
+                        class="${
+                            payment.paymentMethod ===
+                            "Cash"
+                            ?
+                            "method-cash"
+                            :
+                            "method-gcash"
+                        }"
+                    >
+
+                        ${esc(
+                            payment.paymentMethod ||
+                            "-"
+                        )}
+
+                    </td>
+
+                    <td>
+
+                        ${esc(
+                            payment.recordedByName ||
+                            payment.recordedBy ||
+                            "-"
+                        )}
+
+                    </td>
+
+                    <td>
+
+                        ${
+                            isAdmin()
+
+                            ?
+
+                            `
+                            <button
+                                class="delete"
+                                onclick="deletePayment('${esc(payment.id)}')"
+                            >
+                                Delete
+                            </button>
+                            `
+
+                            :
+
+                            `
+                            <span class="locked">
+                                🔒 Staff
+                            </span>
+                            `
+                        }
+
+                    </td>
+
+                </tr>
+
+            `
+
+        )
+        .join("");
+
+}
+
+
+/* =================================
+   SUMMARY
+================================= */
+
+function updateSummary(){
+
+    const today =
+        getToday();
+
+
+    const todayPayments =
+        payments.filter(
+
+            payment =>
+                payment.paymentDate ===
+                today
+
+        );
+
+
+    let sales = 0;
+
+    let cash = 0;
+
+    let gcash = 0;
+
+
+    todayPayments.forEach(
+
+        payment => {
+
+            const amount =
+                Number(
+                    payment.amount
+                ) || 0;
+
+
+            sales += amount;
+
+
+            if(
+                payment.paymentMethod ===
+                "Cash"
+            ){
+
+                cash += amount;
+
+            }
+
+
+            if(
+                payment.paymentMethod ===
+                "GCash"
+            ){
+
+                gcash += amount;
+
+            }
+
+        }
+
+    );
+
+
+    document.getElementById(
+        "totalSales"
+    ).textContent =
+        money(sales);
+
+
+    document.getElementById(
+        "totalCash"
+    ).textContent =
+        money(cash);
+
+
+    document.getElementById(
+        "totalGcash"
+    ).textContent =
+        money(gcash);
+
+}
+
+
+/* =================================
+   DELETE PAYMENT
+================================= */
+
+async function deletePayment(id){
+
+    if(!isAdmin()){
+
+        alert(
+            "Only Admin can delete payment records."
+        );
+
+        return;
+
+    }
+
+
+    const confirmed =
+        confirm(
+
+            "Delete this payment record?\n\n" +
+
+            "This will NOT automatically reverse " +
+            "the member expiry."
+
+        );
+
+
+    if(!confirmed){
+
+        return;
+
+    }
+
+
+    try{
+
+        await db
+            .ref(
+                "payments"
+            )
+            .child(
+                String(id)
+            )
+            .remove();
+
+
+        alert(
+            "Payment deleted successfully."
+        );
+
+
+    }catch(error){
+
+        alert(
+
+            "Unable to delete payment.\n\n" +
+            error.message
+
+        );
+
+    }
+
+}
+
+
+/* =================================
+   START
+================================= */
+
+setupUser();
+
+loadMembers();
+
+loadPayments();
+
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Member Profile - Daily Fitness</title>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<style>
+:root{--yellow:#ffd000;--yellow-soft:#fff7cc;--black:#111111;--text:#202020;--muted:#666;--line:#e5e5e5;--bg:#f7f7f7;--white:#fff;--red:#b42318;--green:#18794e}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 Arial,Helvetica,sans-serif}
+header{background:var(--black);color:#fff;border-bottom:5px solid var(--yellow);padding:22px 24px}header .inner{max-width:1050px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}header h1{font-size:24px;margin:0;color:var(--yellow)}header p{margin:3px 0 0;color:#eee;font-size:13px}
+main{max-width:1050px;margin:28px auto;padding:0 18px 45px}.topline{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:18px}h2{margin:0;font-size:26px}.btn{border:0;border-radius:9px;padding:11px 16px;font-weight:800;cursor:pointer;text-decoration:none;display:inline-block}.back{background:var(--yellow);color:#111}.card{background:var(--white);border:1px solid var(--line);border-radius:16px;padding:24px;box-shadow:0 5px 20px #0000000a}.profile-head{display:flex;align-items:center;gap:18px;padding-bottom:22px;border-bottom:1px solid var(--line);margin-bottom:22px}.avatar{width:64px;height:64px;border-radius:16px;background:var(--yellow);color:#111;display:grid;place-items:center;font-size:28px;font-weight:900}.name{font-size:23px;font-weight:800;overflow-wrap:anywhere}.sub{color:var(--muted);font-size:13px}.status{display:inline-block;margin-top:6px;border-radius:999px;background:var(--yellow-soft);border:1px solid #ead56a;color:#4d4000;padding:4px 10px;font-size:12px;font-weight:800}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.field{border:1px solid var(--line);border-radius:12px;padding:14px;min-width:0}.field label{display:block;color:var(--muted);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px}.field strong{display:block;font-size:16px;overflow-wrap:anywhere}.notice{background:#fff7cc;border:1px solid #ead56a;color:#554700;padding:14px;border-radius:12px}.error{background:#fff0f0;border-color:#f3b3b3;color:var(--red)}.loading{text-align:center;color:var(--muted);padding:36px}
+@media(max-width:700px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}header{padding:18px}.name{font-size:20px}.card{padding:18px}}@media(max-width:460px){.grid{grid-template-columns:1fr}.topline{align-items:flex-start}h2{font-size:22px}}
+</style>
+</head>
+<body>
+<header><div class="inner"><div><h1>DAILY FITNESS</h1><p>MEMBER PROFILE</p></div><a class="btn back" href="members_firebase_VIEW_FIXED.html">← Back to Members</a></div></header>
+<main>
+  <div class="topline"><h2>Member Details</h2></div>
+  <section id="profile" class="card"><div class="loading">Loading member details from Firebase…</div></section>
+</main>
+<script>
+const firebaseConfig={
+  apiKey:"AIzaSyDGI2ZhwqFbhEF40nhC-TxePj0rNBtDMA",
+  authDomain:"daily-fitness-8f4bb.firebaseapp.com",
+  databaseURL:"https://daily-fitness-8f4bb-default-rtdb.firebaseio.com",
+  projectId:"daily-fitness-8f4bb",
+  storageBucket:"daily-fitness-8f4bb.firebasestorage.app",
+  messagingSenderId:"27440670515",
+  appId:"1:27440670515:web:7292f1ee2573a25fc18046",
+  measurementId:"G-SBQXSXIDML1"
+};
+if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+const db=firebase.database();
+const profile=document.getElementById('profile');
+const params=new URLSearchParams(location.search);
+const memberId=params.get('id');
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));}
+function val(...items){const found=items.find(v=>v!==undefined&&v!==null&&String(v).trim()!=='');return found===undefined?'-':String(found);}
+function showError(message){profile.innerHTML='<div class="notice error"><strong>Unable to open member profile.</strong><br>'+esc(message)+'<p>Please go back to Monthly Members and try View again.</p></div>';}
+function renderMember(member,key){
+  const name=val(member.name,member.fullName,member.memberName);
+  const status=val(member.status,member.registrationStatus,'Active');
+  const fee=Number(member.fee??member.monthlyFee??member.monthly_fee??0);
+  const feeText='₱'+fee.toLocaleString('en-PH',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const initials=String(name==='-'?'M':name).trim().split(/\s+/).slice(0,2).map(s=>s.charAt(0)).join('').toUpperCase();
+  const fields=[
+    ['Contact Number',val(member.contact,member.contactNumber,member.phone)],
+    ['Start Date',val(member.startDate,member.start_date)],
+    ['Expiry Date',val(member.expiryDate,member.expiry_date)],
+    ['Monthly Fee',feeText],
+    ['Member ID',val(member.id,key)],
+    ['Membership Status',status],
+    ['Registration Status',val(member.registrationStatus)],
+    ['Date Created',val(member.createdAt,member.createdDate)],
+    ['Email',val(member.email)]
+  ];
+  profile.innerHTML='<div class="profile-head"><div class="avatar">'+esc(initials||'M')+'</div><div><div class="name">'+esc(name)+'</div><div class="sub">Daily Fitness monthly member</div><span class="status">'+esc(status)+'</span></div></div><div class="grid">'+fields.map(([label,value])=>'<div class="field"><label>'+esc(label)+'</label><strong>'+esc(value)+'</strong></div>').join('')+'</div>';
+}
+async function loadMember(){
+ if(!memberId){showError('The member ID is missing from the link.');return;}
+ try{
+   const snap=await db.ref('members').once('value');
+   const data=snap.val()||{};
+   let found=null,foundKey=null;
+   if(Object.prototype.hasOwnProperty.call(data,memberId)){found=data[memberId];foundKey=memberId;}
+   if(!found){for(const key of Object.keys(data)){const m=data[key]||{};if(String(m.id??'')===String(memberId)){found=m;foundKey=key;break;}}}
+   if(!found){
+     // Fallback to locally cached members used by older Daily Fitness pages.
+     let localMembers=[];
+     try { localMembers=JSON.parse(localStorage.getItem('dailyFitnessMembers')||'[]'); } catch(e) {}
+     const localFound=localMembers.find(m=>String(m.id??m.firebaseKey??'')===String(memberId));
+     if(localFound){ found=localFound; foundKey=localFound.id??memberId; }
+   }
+   if(!found){showError('No matching member was found for ID "'+memberId+'". Please return to Monthly Members and click View for that member again.');return;}
+   renderMember(found,foundKey);
+ }catch(error){console.error(error);showError(error.message||'Firebase could not load this member.');}
+}
+loadMember();
+</script>
+</body>
+</html>
